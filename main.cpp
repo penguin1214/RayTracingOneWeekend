@@ -11,7 +11,7 @@
 using namespace std;
 
 vec3 color(const ray &r, hitable *world);
-
+vec3 random_in_unit_sphere();
 float hit_sphere(const ray &r, const vec3 &center, float radius);
 
 int main() {
@@ -40,6 +40,8 @@ int main() {
                 col += color(r, world);
             }
             col /= float(ns);
+            // gamma correct
+            col = vec3(sqrt(col.e[0]), sqrt(col.e[1]), sqrt(col.e[2]));
             int ir = int(255.99*col.e[0]);  // why use 255.99?
             int ig = int(255.99*col.e[1]);
             int ib = int(255.99*col.e[2]);
@@ -53,12 +55,22 @@ vec3 color(const ray &r, hitable *world) {
     // shading
     hit_record rec;
     if (world->hit(r, 0.0, MAXFLOAT, rec)) {
-        return 0.5*vec3(rec.norm.x()+1, rec.norm.y()+1, rec.norm.z()+1);
+        vec3 target = rec.p + rec.norm + random_in_unit_sphere();   // random vector derived
+        return 0.5*color(ray(rec.p, target-rec.p), world);
     } else {
         vec3 unit_dir = unit(r.d);
         float t = 0.5*(unit_dir.y() + 1.0);
         return (1.0-t)*vec3(1.0,1.0,1.0) + t*vec3(0.5,0.7,1.0);
     }
+}
+
+vec3 random_in_unit_sphere() {
+    // pick random point in cube and check if it's in the sphere
+    vec3 p;
+    do{
+        p = vec3((2*((double)rand()/(RAND_MAX))-1), (2*((double)rand()/(RAND_MAX))-1), (2*((double)rand()/(RAND_MAX))-1));
+    } while (dot(p, p) >= 1.0);
+    return p;
 }
 
 float hit_sphere(const ray &r, const vec3 &center, float radius) {
