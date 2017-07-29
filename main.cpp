@@ -7,7 +7,7 @@ using namespace std;
 
 vec3 color(const ray& r, const vec3 start_val, const vec3 end_val);
 
-bool hit_sphere(const ray&r, const vec3& center, float radius);
+float hit_sphere(const ray &r, const vec3 &center, float radius);
 
 int main() {
     ofstream myfile;
@@ -36,17 +36,26 @@ int main() {
 }
 
 vec3 color(const ray& r, const vec3 start_val, const vec3 end_val) {
-    // do lerp
-    if (hit_sphere(r, vec3(0,0,-1), 0.5))
-        return vec3(1,0,0); // red
+    float t = hit_sphere(r, vec3(0,0,-1), 0.5);
+    if (t > 0.0) {
+        // hit! compute norm
+        vec3 norm = unit(r.point_at_parameter(t) - vec3(0,0,-1));
+        return 0.5*vec3(norm.x()+1, norm.y()+1, norm.z()+1);
+    }
     vec3 unit_dir = unit(r.d);
-    float t = 0.5*(unit_dir.y() + 1.0);
+    t = 0.5*(unit_dir.y() + 1.0);
     return (1.0-t)*start_val + t*end_val;
 }
 
-bool hit_sphere(const ray&r, const vec3& center, float radius) {
+float hit_sphere(const ray &r, const vec3 &center, float radius) {
     float a = dot(r.direction(), r.direction());
     float b = 2.0 * dot((r.origin()-center), r.direction());
     float c = dot(r.origin()-center, r.origin()-center) - radius*radius;
-    return (sqrt(b*b-4*a*c)) >= 0;
+    float disc = b*b-4*a*c;
+    if ((sqrt(disc)) >= 0) {
+        // calculate hit point
+        return (-b-sqrt(disc)) / (2.0*a);
+    } else {
+        return -1;
+    }
 }

@@ -17,7 +17,7 @@ public:
     ray(const vec3& a, const vec3& b) {o = a; d = b;}
     vec3 origin() const { return o;}
     vec3 direction() const { return d;}
-    vec3 point_at_parameter(float t) { return o+d*t;}
+    vec3 point_at_parameter(float t) const { return o+d*t;}
 };
 
 #endif //RAYTRACINGONEWEEKEND_RAY_H
