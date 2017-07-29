@@ -64,15 +64,6 @@ vec3 color(const ray &r, hitable *world) {
     }
 }
 
-vec3 random_in_unit_sphere() {
-    // pick random point in cube and check if it's in the sphere
-    vec3 p;
-    do{
-        p = vec3((2*((double)rand()/(RAND_MAX))-1), (2*((double)rand()/(RAND_MAX))-1), (2*((double)rand()/(RAND_MAX))-1));
-    } while (dot(p, p) >= 1.0);
-    return p;
-}
-
 float hit_sphere(const ray &r, const vec3 &center, float radius) {
     float a = dot(r.direction(), r.direction());
     float b = 2.0 * dot((r.origin()-center), r.direction());
