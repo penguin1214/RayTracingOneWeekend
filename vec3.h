@@ -133,7 +133,7 @@ inline vec3 cross(const vec3& v1, const vec3& v2) {
 }
 
 inline std::istream& operator>>(std::istream& is, vec3& v) {
-    is >> v.e[0] >> " " >> v.e[1] >> " " >> v.e[2];
+    is >> v.e[0] >> v.e[1] >> v.e[2];
     return is;
 }
 

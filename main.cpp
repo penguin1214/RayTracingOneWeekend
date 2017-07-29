@@ -1,23 +1,11 @@
 #include <iostream>
 #include <fstream>
+#include "vec3.h"
 
 using namespace std;
 int main() {
-    ofstream ppm;
-    ppm.open("image.ppm");
-    int width = 200;
-    int height = 100;
-    float delta_x = 255 / width;
-    float delta_y = 255 / height;
-    ppm << "P3\n" << width << " " << height << "\n255\n";   // ASCII, size, max value
-    int r = 0; int g = 0; int b = 0;
-    for (int i = 0; i < height; ++i) {
-        g = 255 - delta_y * i;
-        for (int j = 0; j < width; ++j) {
-            r = delta_x * j;
-            ppm << r << " " << g << " " << b << " ";
-        }
-        ppm << endl;
-    }
+    vec3 v1 = vec3(1,2,3);
+    vec3 v2 = vec3(4,5,6);
+    cout << dot(v1, v2) << endl;
     return 0;
 }
