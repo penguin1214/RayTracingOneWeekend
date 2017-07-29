@@ -1,9 +1,11 @@
 #include <iostream>
 #include <fstream>
+#include <cstdlib>
 #include "vec3.h"
 #include "ray.h"
 #include "sphere.h"
 #include "hitable_list.h"
+#include "camera.h"
 
 #define MAXFLOAT 100.0
 using namespace std;
@@ -17,24 +19,28 @@ int main() {
     myfile.open("image.ppm");
     int width = 200;
     int height = 100;
+    int ns = 100;   // sample number
+
     hitable* list[2];
     list[0] = new sphere(vec3(0,0,-1), 0.5);
     list[1] = new sphere(vec3(0,-100.5,-1), 100);
     hitable* world = new hitable_list(list, 2);
 
     myfile << "P3\n" << width << " " << height << "\n255\n";
-    vec3 lower_left_corner = vec3(-2.0, -1.0, -1.0);
-    vec3 horizontal = vec3(4.0, 0.0, 0.0);  // film width
-    vec3 vertical = vec3(0.0, 2.0, 0.0);    // film height
-    vec3 origin = vec3(0.0, 0.0, 0.0);
+    camera cam;
 
     for (int i = height-1; i >= 0; --i) {
         for (int j = 0; j < width; ++j) {
-            float u = float(j) / float(width);  // u, v cord??
-            float v = float(i) / float(height);
-            ray r(origin, lower_left_corner + u*horizontal + v*vertical);
-            vec3 col = color(r, world);
-            int ir = int(255.99*col.e[0]);
+            vec3 col(0,0,0);
+            for (int s = 0; s < ns; ++s) {
+                float random = ((double) rand() / (RAND_MAX)) + 1;
+                float u = float(j+random) / float(width);  // u, v cord??
+                float v = float(i+random) / float(height);
+                ray r = cam.get_ray(u, v);
+                col += color(r, world);
+            }
+            col /= float(ns);
+            int ir = int(255.99*col.e[0]);  // why use 255.99?
             int ig = int(255.99*col.e[1]);
             int ib = int(255.99*col.e[2]);
             myfile << ir << " " << ig << " " << ib << "\n";
