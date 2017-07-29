@@ -7,6 +7,8 @@ using namespace std;
 
 vec3 color(const ray& r, const vec3 start_val, const vec3 end_val);
 
+bool hit_sphere(const ray&r, const vec3& center, float radius);
+
 int main() {
     ofstream myfile;
     myfile.open("image.ppm");
@@ -16,12 +18,12 @@ int main() {
     vec3 lower_left_corner = vec3(-2.0, -1.0, -1.0);
     vec3 horizontal = vec3(4.0, 0.0, 0.0);
     vec3 vertical = vec3(0.0, 2.0, 0.0);
-    vec3 origin = vec3(0.0);
+    vec3 origin = vec3(0.0, 0.0, 0.0);
 
-    for (int i = height; i > 0; --i) {
+    for (int i = height-1; i >= 0; --i) {
         for (int j = 0; j < width; ++j) {
-            float u = float(i) / float(width);  // u, v cord??
-            float v = float(j) / float(height);
+            float u = float(j) / float(width);  // u, v cord??
+            float v = float(i) / float(height);
             ray r(origin, lower_left_corner + u*horizontal + v*vertical);
             vec3 col = color(r, vec3(1.0, 1.0, 1.0), vec3(0.5, 0.7, 1.0));
             int ir = int(255.99*col.e[0]);
@@ -35,7 +37,16 @@ int main() {
 
 vec3 color(const ray& r, const vec3 start_val, const vec3 end_val) {
     // do lerp
+    if (hit_sphere(r, vec3(0,0,-1), 0.5))
+        return vec3(1,0,0); // red
     vec3 unit_dir = unit(r.d);
     float t = 0.5*(unit_dir.y() + 1.0);
     return (1.0-t)*start_val + t*end_val;
+}
+
+bool hit_sphere(const ray&r, const vec3& center, float radius) {
+    float a = dot(r.direction(), r.direction());
+    float b = 2.0 * dot((r.origin()-center), r.direction());
+    float c = dot(r.origin()-center, r.origin()-center) - radius*radius;
+    return (sqrt(b*b-4*a*c)) >= 0;
 }
