@@ -12,10 +12,12 @@ public:
 
     vec3 center;
     float radius;
+    material* mat_ptr;
 
     // constructor
     sphere() {}
     sphere(vec3 center, float radius) : center(center), radius(radius) {}
+    sphere(vec3 center, float radius, material* mat) : center(center), radius(radius), mat_ptr(mat) {}
     virtual bool hit(const ray& r, float t_min, float t_max, hit_record& rec) const;
 };
 
@@ -32,6 +34,7 @@ bool sphere::hit(const ray &r, float t_min, float t_max, hit_record &rec) const 
             rec.t = temp;
             rec.p = r.point_at_parameter(temp);
             rec.norm = (rec.p - center) / radius; // get unit normal
+            rec.mat_ptr = mat_ptr;
             return true;
         }
     }

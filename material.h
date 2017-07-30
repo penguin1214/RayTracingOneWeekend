@@ -32,7 +32,7 @@ public:
     vec3 albedo;
 
     // constructor
-    lambertian(const vec3& albedo) {}
+    lambertian(const vec3& albedo) : albedo(albedo) {}
     virtual bool scatter(const ray& r_in, const hit_record& rec, vec3& attenuation, ray& scattered) const {
         vec3 target = rec.p + rec.norm + random_in_unit_sphere();
         scattered = ray(rec.p, target-rec.p);
@@ -44,11 +44,13 @@ public:
 class metal: public material {
 public:
     vec3 albedo;
+
+    metal(const vec3& albedo) : albedo(albedo) {}
     virtual bool scatter(const ray& r_in, const hit_record& rec, vec3& attenuation, ray& scattered) const {
         vec3 reflected_dir = reflect(unit(r_in.direction()), rec.norm);
         scattered = ray(rec.p, reflected_dir);
         attenuation = albedo;
-        return (dot(scattered.direction(), rec.norm) > 0)
+        return (dot(scattered.direction(), rec.norm) > 0);
     }
 };
 
