@@ -18,16 +18,17 @@ float hit_sphere(const ray &r, const vec3 &center, float radius);
 int main() {
     ofstream myfile;
     myfile.open("image.ppm");
-    int width = 200;
-    int height = 100;
+    int width = 400;
+    int height = 200;
     int ns = 100;   // sample number
 
-    hitable* list[4];
-    list[0] = new sphere(vec3(0,0,-1), 0.5, new lambertian(vec3(0.8, 0.3, 0.3)));
+    hitable* list[5];
+    list[0] = new sphere(vec3(0,0,-1), 0.5, new lambertian(vec3(0.1,0.2,0.5)));
     list[1] = new sphere(vec3(0,-100.5,-1), 100, new lambertian(vec3(0.8, 0.8, 0.0)));
-    list[2] = new sphere(vec3(1,0,-1), 0.5, new metal(vec3(0.8,0.6,0.2), 0.3));
-    list[3] = new sphere(vec3(-1,0,-1), 0.5, new metal(vec3(0.8,0.8,0.8), 0.7));
-    hitable* world = new hitable_list(list, 4);
+    list[2] = new sphere(vec3(1,0,-1), 0.5, new metal(vec3(0.8,0.6,0.2),0.1));
+    list[3] = new sphere(vec3(-1,0,-1), 0.5, new dielectric(1.5));
+    list[4] = new sphere(vec3(0,0,-0.5), 0.45, new dielectric(1.7));
+    hitable* world = new hitable_list(list, 5);
 
     myfile << "P3\n" << width << " " << height << "\n255\n";
     camera cam;
